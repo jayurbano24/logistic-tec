@@ -66,7 +66,7 @@ export default function Navbar() {
         {/* Mostrar usuario logueado y Logout */}
         {!loading && user && (
           <div className="flex items-center gap-4">
-            <span className="text-gray-700 font-medium">{user.email} {profile?.rol ? `(${profile.rol})` : ''}</span>
+            <span className="text-gray-700 font-medium">{profile?.nombre_usuario || user.email} {profile?.rol ? `(${profile.rol})` : ''}</span>
             <button
               onClick={handleLogout}
               className="text-red-600 hover:underline font-semibold"
