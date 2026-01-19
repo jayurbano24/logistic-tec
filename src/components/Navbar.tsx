@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSupabaseAuth } from '../lib/supabaseAuth';
 
 export default function Navbar() {
-  const { user, loading } = useSupabaseAuth();
+  const { user, profile, loading } = useSupabaseAuth();
 
   return (
     <nav className="bg-white shadow flex items-center justify-between px-6 py-3 mb-8">
@@ -14,18 +14,26 @@ export default function Navbar() {
           <Link href="/register" className="text-blue-600 hover:underline">Registro</Link>
         )}
         <Link href="/login" className="text-blue-600 hover:underline">Login</Link>
-        <Link href="/solicitud" className="text-blue-600 hover:underline">Solicitud</Link>
 
-        <Link href="/solicitud/listado" className="text-blue-600 hover:underline">Mis Solicitudes</Link>
-        {user?.email === 'gurbanotcwmx@gmail.com' && (
+        {/* Solicitud y Mis Solicitudes: Visible para Admin y Cliente (Oculto para Empleados) */}
+        {(!profile || profile?.rol !== 'EMPLEADO') && (
+          <>
+            <Link href="/solicitud" className="text-blue-600 hover:underline">Solicitud</Link>
+            <Link href="/solicitud/listado" className="text-blue-600 hover:underline">Mis Solicitudes</Link>
+          </>
+        )}
+
+        {/* Admin y Dashboard: Visible para Admin y Empleado (y superusuario legacy) */}
+        {(profile?.rol === 'ADMIN' || profile?.rol === 'EMPLEADO' || user?.email === 'gurbanotcwmx@gmail.com') && (
           <>
             <Link href="/admin" className="text-blue-600 hover:underline">Admin</Link>
             <Link href="/admin/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
           </>
         )}
+
         {/* Mostrar usuario logueado */}
         {!loading && user && (
-          <span className="ml-4 text-gray-700 font-medium">{user.email}</span>
+          <span className="ml-4 text-gray-700 font-medium">{user.email} {profile?.rol ? `(${profile.rol})` : ''}</span>
         )}
       </div>
     </nav>
