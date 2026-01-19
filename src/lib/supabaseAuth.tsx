@@ -53,8 +53,14 @@ export function useSupabaseAuth() {
       setLoading(false);
     });
 
+    // Failsafe: Si Supabase tarda más de 3 segundos, liberar la UI
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
     return () => {
       listener.subscription.unsubscribe();
+      clearTimeout(timer);
     };
   }, []);
 
