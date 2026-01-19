@@ -13,23 +13,25 @@ export function useSupabaseAuth() {
         const { data: { session }, error } = await supabase.auth.getSession();
         if (session?.user) {
           setUser(session.user);
+          setLoading(false); // Unblock UI immediately
+
           try {
             const userProfile = await getUserProfile(session.user.id);
             setProfile(userProfile);
           } catch (err) {
             console.error("Error fetching profile:", err);
-            // If profile doesn't exist, we might treat as basic user or just ignore
             setProfile(null);
           }
         } else {
           setUser(null);
           setProfile(null);
+          setLoading(false);
         }
       } catch (e) {
         console.error(e);
-      } finally {
         setLoading(false);
       }
+      // finally block removed as setLoading is handled in all paths eagerly
     };
 
     fetchSession();
